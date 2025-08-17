@@ -3,7 +3,7 @@ import { Copy, Sparkles, Globe, Upload, Check, Loader2, X, Camera } from 'lucide
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar/Navbar';
 
-const BASE_URL = 'http://localhost:8080/api';
+
 
 // Ensure cookies are included in all requests
 const fetchWithCredentials = (url: string, options: RequestInit = {}) => {
@@ -100,7 +100,7 @@ function Gencaption() {
       formData.append('image', file);
 
       // Send request to backend
-      const response = await fetch(`${BASE_URL}/posts/`, {
+      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/posts/`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -131,7 +131,7 @@ function Gencaption() {
     setSelectedLanguage(language);
     
     try {
-      const response = await fetchWithCredentials(`${BASE_URL}/translate`, {
+      const response = await fetchWithCredentials(`https://caption-generator-q86a.onrender.com/api/translate`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -163,7 +163,7 @@ function Gencaption() {
     } finally {
       setIsTranslating(false);
     }
-  }, [generatedCaption, selectedLanguage, BASE_URL]);
+  }, [generatedCaption, selectedLanguage, `https://caption-generator-q86a.onrender.com/api`]);
 
   const copyToClipboard = useCallback(async (text: string) => {
     try {

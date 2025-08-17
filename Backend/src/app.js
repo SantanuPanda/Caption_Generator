@@ -9,7 +9,7 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://caption-generator-git-main-fit-fusion.vercel.app'
+  'https://caption-generator-maad.vercel.app'
 ];
 
 app.use(cors({

@@ -1,0 +1,26 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  background-color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+:root.dark body {
+  background-color: #111827;
+  color: white;
+}
+
+.theme-toggle {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  transition: all 0.3s;
+}
+
+:root.dark .theme-toggle {
+  border-color: #4b5563;
+  color: #d1d5db;
+}

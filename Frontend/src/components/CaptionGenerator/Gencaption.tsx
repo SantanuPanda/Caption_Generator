@@ -3,6 +3,7 @@ import { Copy, Sparkles, Globe, Upload, Check, Loader2, X, Camera } from 'lucide
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar/Navbar';
 
+const BaseUrl = 'http://localhost:8080/api'; // Update to your backend URL
 
 // Ensure cookies are included in all requests
 const fetchWithCredentials = (url: string, options: RequestInit = {}) => {
@@ -86,6 +87,10 @@ function Gencaption() {
 
   const generateCaption = useCallback(async () => {
     if (!selectedImage) return;
+    if (!user) {
+      setGeneratedCaption('Please log in to generate captions');
+      return;
+    }
     
     setIsGenerating(true);
     try {
@@ -99,16 +104,18 @@ function Gencaption() {
       formData.append('image', file);
 
       // Send request to backend
-      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/posts/`, {
+      const response = await fetch(`${BaseUrl}/posts/`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
-        // Don't set Content-Type header, let the browser set it with the boundary for FormData
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
       if (response.status === 401) {
         // If unauthorized, try to verify the auth status
-        const verifyResponse = await fetch('https://caption-generator-q86a.onrender.com/api/auth/verify', {
+        const verifyResponse = await fetch(`${BaseUrl}/auth/verify`, {
           credentials: 'include'
         });
         if (!verifyResponse.ok) {
@@ -127,16 +134,13 @@ function Gencaption() {
       console.error('Error generating caption:', error);
       // Try to get more details about the error
       if (error instanceof Error) {
-        setGeneratedCaption(`Failed to generate caption: ${error.message}`);
+        if (error.message.includes('Please log in')) {
+          setGeneratedCaption('Please log in to generate captions');
+        } else {
+          setGeneratedCaption(`Failed to generate caption: ${error.message}`);
+        }
       } else {
         setGeneratedCaption('Failed to generate caption. Please try again.');
-      }
-      
-      // Log out if unauthorized
-      if (error.message?.includes('Please log in')) {
-        setTimeout(() => {
-          window.location.href = '/LoginPage';
-        }, 2000);
       }
     } finally {
       setIsGenerating(false);
@@ -145,12 +149,19 @@ function Gencaption() {
 
   const translateCaption = useCallback(async (language: string) => {
     if (!generatedCaption || language === selectedLanguage) return;
+    if (!user) {
+      setTranslations(prev => ({
+        ...prev,
+        [language]: 'Please log in to translate'
+      }));
+      return;
+    }
     
     setIsTranslating(true);
     setSelectedLanguage(language);
     
     try {
-      const response = await fetchWithCredentials(`https://caption-generator-q86a.onrender.com/api/translate`, {
+      const response = await fetchWithCredentials(`${BaseUrl}/translate`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -182,7 +193,7 @@ function Gencaption() {
     } finally {
       setIsTranslating(false);
     }
-  }, [generatedCaption, selectedLanguage, `https://caption-generator-q86a.onrender.com/api`]);
+  }, [generatedCaption, selectedLanguage, BaseUrl]);
 
   const copyToClipboard = useCallback(async (text: string) => {
     try {
@@ -425,7 +436,7 @@ function Gencaption() {
         {/* Footer */}
         <div className="text-center text-gray-500 dark:text-gray-400">
           <p className="text-sm">
-            Powered by AI Vision • Supporting 5 languages • Built with ❤️
+            Powered by AI Vision • Supporting 5 languages • Built By Suvam & Santanu
           </p>
         </div>
       </div>

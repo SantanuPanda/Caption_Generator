@@ -32,11 +32,10 @@ async function registercotroller(req, res) {
 
     res.cookie("usertoken", TOKEN, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 3600000, // 1 hour
-      path: '/',
-      domain: 'onrender.com'
+      path: '/'
     });
 
     res.status(200).json({
@@ -85,11 +84,10 @@ async function logincontroller(req, res) {
 
     res.cookie("usertoken", TOKEN, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 3600000, // 1 hour
-      path: '/',
-      domain: 'onrender.com'
+      path: '/'
     });
 
     res.status(200).json({

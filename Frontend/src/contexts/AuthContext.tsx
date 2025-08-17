@@ -29,25 +29,54 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for existing authentication on app load
+
+  // Check for existing authentication on app load and redirect if needed
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch('https://caption-generator-q86a.onrender.com/api/auth/verify', {
+        setIsLoading(true);
+        // First check if we have a stored auth state
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+
+        const response = await fetch(`http://localhost:8080/api/auth/verify`, {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
         });
         
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+
+          // Redirect to caption generator if on landing page
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
+            window.location.href = '/generatecaption';
+          }
+        } else {
+          setUser(null);
+          localStorage.removeItem('user');
+          // If not on auth pages, redirect to landing
+          const currentPath = window.location.pathname;
+          if (currentPath !== '/' && currentPath !== '/LoginPage' && currentPath !== '/RegisterPage') {
+            window.location.href = '/';
+          }
         }
       } catch (error) {
         console.error('Auth status check error:', error);
+        setUser(null);
+        localStorage.removeItem('user');
       } finally {
         setIsLoading(false);
       }
@@ -58,19 +87,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch('https://caption-generator-q86a.onrender.com/api/auth/Login', {
+      const response = await fetch(`http://localhost:8080/api/auth/Login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
-
       if (response.ok) {
         setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // After successful login, navigate to caption generator
+        setTimeout(() => {
+          window.location.href = '/generatecaption';
+        }, 100);
+        
         return { success: true, message: 'Login successful!' };
       } else {
         return { success: false, message: data.message || 'Login failed. Please check your credentials.' };
@@ -83,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch('https://caption-generator-q86a.onrender.com/api/auth/Register', {
+      const response = await fetch(`http://localhost:8080/api/auth/Register`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -114,14 +150,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('https://caption-generator-q86a.onrender.com/api/auth/logout', {
+      await fetch(`http://localhost:8080/api/auth/logout`, {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
       });
     } catch (error) {
       console.error('Logout error:', error);
     }
     setUser(null);
+    localStorage.removeItem('user');
+    window.location.href = '/';
   };
 
   const value: AuthContextType = {

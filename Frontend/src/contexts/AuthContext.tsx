@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 
 interface User {
@@ -34,6 +35,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
 
   // Check for existing authentication on app load and redirect if needed
@@ -63,7 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Only redirect if explicitly on the landing or auth pages
           const currentPath = window.location.pathname;
           if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
-            window.location.replace('/generatecaption');
+            navigate('/generatecaption', { replace: true });
           }
 
         } else {
@@ -107,8 +109,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Add a small delay to ensure cookie is set
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // Navigate to caption generator using replace
-        window.location.replace('/generatecaption');
+        // Navigate to caption generator using router
+        navigate('/generatecaption', { replace: true });
         
         return { success: true, message: 'Login successful!' };
       } else {

@@ -1,9 +1,32 @@
 {
-  "framework": "create-react-app",
-  "rewrites": [
-    { 
-      "source": "/(.*)", 
-      "destination": "/" 
+  "routes": [
+    {
+      "src": "/generatecaption",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/LoginPage",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/RegisterPage",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

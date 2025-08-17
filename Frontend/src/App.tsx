@@ -9,8 +9,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 const App = () => {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <Router>
+      <Router>
+        <AuthProvider>
           <div style={{ minHeight: '100vh', transition: 'all 0.3s ease' }}>
             <Routes>
               {/* Public Routes */}
@@ -32,10 +32,9 @@ const App = () => {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
-        </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </Router>
     </ThemeProvider>
   );
 };
-
 export default App;

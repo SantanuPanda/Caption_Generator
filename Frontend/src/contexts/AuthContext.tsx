@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuthStatus = async () => {
       try {
         setIsLoading(true);
-        // First check if we have a stored auth state
+        // Don't redirect immediately if we have a stored user
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           setUser(JSON.parse(storedUser));
@@ -60,10 +60,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(data.user);
           localStorage.setItem('user', JSON.stringify(data.user));
 
-          // Redirect to caption generator if on landing page
+          // Only redirect if explicitly on the landing or auth pages
           const currentPath = window.location.pathname;
           if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
-            // Use window.location.replace instead of href for better handling
             window.location.replace('/generatecaption');
           }
 

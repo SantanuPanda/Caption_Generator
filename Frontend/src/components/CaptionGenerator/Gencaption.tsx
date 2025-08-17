@@ -31,6 +31,7 @@ const languages = [
 
 ];
 
+
 function Gencaption() {
   const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -49,18 +50,99 @@ function Gencaption() {
     // Handle navigation logic here if needed
   };
 
-  const handleImageUpload = useCallback((file: File) => {
-    if (file && file.type.startsWith('image/')) {
+  const compressImage = async (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const result = e.target?.result;
-        if (result && typeof result === 'string') {
-          setSelectedImage(result);
-        }
-        setGeneratedCaption('');
-        setSelectedLanguage('english');
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Maximum dimensions
+          const MAX_WIDTH = 1920;
+          const MAX_HEIGHT = 1080;
+          
+          // Scale down if image is too large
+          if (width > MAX_WIDTH) {
+            height = Math.round(height * (MAX_WIDTH / width));
+            width = MAX_WIDTH;
+          }
+          if (height > MAX_HEIGHT) {
+            width = Math.round(width * (MAX_HEIGHT / height));
+            height = MAX_HEIGHT;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Convert to blob with reduced quality
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('Failed to compress image'));
+              }
+            },
+            'image/jpeg',
+            0.8  // 80% quality
+          );
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target?.result as string;
       };
+      reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageUpload = useCallback(async (file: File) => {
+    try {
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+      }
+
+      const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+      if (file.size > MAX_SIZE) {
+        // If file is too large, compress it
+        const compressedBlob = await compressImage(file);
+        if (compressedBlob.size > MAX_SIZE) {
+          alert('Image is too large. Please try a smaller image.');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result;
+          if (result && typeof result === 'string') {
+            setSelectedImage(result);
+          }
+          setGeneratedCaption('');
+          setSelectedLanguage('english');
+        };
+        reader.readAsDataURL(compressedBlob);
+      } else {
+        // If file size is acceptable, proceed normally
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result;
+          if (result && typeof result === 'string') {
+            setSelectedImage(result);
+          }
+          setGeneratedCaption('');
+          setSelectedLanguage('english');
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (error) {
+      console.error('Error handling image:', error);
+      alert('Failed to process image. Please try another one.');
     }
   }, []);
 
@@ -96,9 +178,15 @@ function Gencaption() {
     
     setIsGenerating(true);
     try {
-      // Convert base64 image to file
-      const base64Data = selectedImage.split(',')[1];
-      const blob = await fetch(`data:image/jpeg;base64,${base64Data}`).then(res => res.blob());
+      // Convert base64 to blob with compression if needed
+      const base64Response = await fetch(selectedImage);
+      let blob = await base64Response.blob();
+      
+      // Check if the blob needs compression
+      if (blob.size > 10 * 1024 * 1024) {
+        blob = await compressImage(new File([blob], 'image.jpg', { type: blob.type }));
+      }
+      
       const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
 
       // Create form data
@@ -111,7 +199,8 @@ function Gencaption() {
         body: formData,
         credentials: 'include',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          // Don't set Content-Type header for FormData, browser will set it with boundary
         }
       });
 
@@ -126,7 +215,8 @@ function Gencaption() {
       }
 
       if (!response.ok) {
-        throw new Error('Failed to generate caption');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate caption');
       }
 
       const data = await response.json();

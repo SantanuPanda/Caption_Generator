@@ -1,17 +1,12 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
-/.pnp
-.pnp.js
-package-lock.json
-yarn.lock
 
-# Environment variables
+# Environment Variables
 .env
 .env.local
-.env.*.local
 .env.development
-.env.test
 .env.production
+.env.test
 
 # Debug logs
 npm-debug.log*
@@ -19,59 +14,3 @@ yarn-debug.log*
 yarn-error.log*
 logs/
 *.log
-
-# Build artifacts
-/dist
-/build
-/coverage
-.nyc_output/
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# OS files
-.DS_Store
-Thumbs.db
-.directory
-
-# Editor directories and files
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-*.sublime-project
-*.sublime-workspace
-
-# Temporary files
-/tmp
-/temp
-*.tmp
-
-# Optional: MongoDB data directory
-/data/db
-
-# Optional: Local development files
-.localdev/
-.cache/
-
-# Test files
-/coverage
-/.nyc_output
-
-# Debug
-.debug/
-
-# Optional: Database files
-*.sqlite
-*.db
-
-# Uploads directory (if you're handling local file uploads)
-/uploads
-
-# API documentation
-/docs/api
-/api-docs

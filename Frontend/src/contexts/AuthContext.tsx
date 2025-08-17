@@ -59,11 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(data.user);
           localStorage.setItem('user', JSON.stringify(data.user));
 
-          // Redirect to caption generator if on landing page
-          const currentPath = window.location.pathname;
-          if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
-            window.location.href = '/generatecaption';
-          }
+
         } else {
           setUser(null);
           localStorage.removeItem('user');

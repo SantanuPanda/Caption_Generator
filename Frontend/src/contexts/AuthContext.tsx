@@ -59,7 +59,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(data.user);
           localStorage.setItem('user', JSON.stringify(data.user));
 
-
+          // Redirect to caption generator if on landing page
+          const currentPath = window.location.pathname;
+          if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
+            window.location.href = '/generatecaption';
+          }
         } else {
           setUser(null);
           localStorage.removeItem('user');
@@ -98,11 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // After successful login, navigate to caption generator
-        setTimeout(() => {
-          window.location.href = '/generatecaption';
-        }, 100);
-        
+
         return { success: true, message: 'Login successful!' };
       } else {
         return { success: false, message: data.message || 'Login failed. Please check your credentials.' };

@@ -3,7 +3,7 @@ import { Copy, Sparkles, Globe, Upload, Check, Loader2, X, Camera } from 'lucide
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar/Navbar';
 
-const BaseUrl = 'http://localhost:8080/api'; // Update to your backend URL
+const BaseUrl = 'https://caption-generator-q86a.onrender.com/api'; // Update to your backend URL
 
 // Ensure cookies are included in all requests
 const fetchWithCredentials = (url: string, options: RequestInit = {}) => {

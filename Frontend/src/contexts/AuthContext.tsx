@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(JSON.parse(storedUser));
         }
 
-        const response = await fetch(`http://localhost:8080/api/auth/verify`, {
+        const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/verify`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/Login`, {
+      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/Login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/Register`, {
+      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/Register`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -150,7 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch(`http://localhost:8080/api/auth/logout`, {
+      await fetch(`https://caption-generator-q86a.onrender.com/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {

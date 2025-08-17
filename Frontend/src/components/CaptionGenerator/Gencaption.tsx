@@ -102,10 +102,21 @@ function Gencaption() {
       const response = await fetch(`https://caption-generator-q86a.onrender.com/api/posts/`, {
         method: 'POST',
         body: formData,
+        credentials: 'include', // Add credentials to include cookies
         headers: {
           'Accept': 'application/json',
         }
       });
+
+      if (response.status === 401) {
+        // If unauthorized, try to verify the auth status
+        const verifyResponse = await fetch('https://caption-generator-q86a.onrender.com/api/auth/verify', {
+          credentials: 'include'
+        });
+        if (!verifyResponse.ok) {
+          throw new Error('Please log in again to continue');
+        }
+      }
 
       if (!response.ok) {
         throw new Error('Failed to generate caption');
@@ -116,7 +127,19 @@ function Gencaption() {
       setSelectedLanguage('english');
     } catch (error) {
       console.error('Error generating caption:', error);
-      setGeneratedCaption('Failed to generate caption. Please try again.');
+      // Try to get more details about the error
+      if (error instanceof Error) {
+        setGeneratedCaption(`Failed to generate caption: ${error.message}`);
+      } else {
+        setGeneratedCaption('Failed to generate caption. Please try again.');
+      }
+      
+      // Log out if unauthorized
+      if (error.message?.includes('Please log in')) {
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+      }
     } finally {
       setIsGenerating(false);
     }

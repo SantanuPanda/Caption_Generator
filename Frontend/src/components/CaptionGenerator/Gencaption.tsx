@@ -99,7 +99,7 @@ function Gencaption() {
       formData.append('image', file);
 
       // Send request to backend
-      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/posts/`, {
+      const response = await fetch(`https://caption-generator-1-4w73.onrender.com/api/posts/`, {
         method: 'POST',
         body: formData,
         credentials: 'include', // Add credentials to include cookies
@@ -110,7 +110,7 @@ function Gencaption() {
 
       if (response.status === 401) {
         // If unauthorized, try to verify the auth status
-        const verifyResponse = await fetch('https://caption-generator-q86a.onrender.com/api/auth/verify', {
+        const verifyResponse = await fetch('https://caption-generator-1-4w73.onrender.com/api/auth/verify', {
           credentials: 'include'
         });
         if (!verifyResponse.ok) {
@@ -137,7 +137,7 @@ function Gencaption() {
       // Log out if unauthorized
       if (error.message?.includes('Please log in')) {
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/LoginPage';
         }, 2000);
       }
     } finally {
@@ -152,7 +152,7 @@ function Gencaption() {
     setSelectedLanguage(language);
     
     try {
-      const response = await fetchWithCredentials(`https://caption-generator-q86a.onrender.com/api/translate`, {
+      const response = await fetchWithCredentials(`https://caption-generator-1-4w73.onrender.com/api/translate`, {
         method: 'POST',
         credentials: 'include',
         headers: {

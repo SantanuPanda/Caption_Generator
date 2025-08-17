@@ -4,7 +4,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar/Navbar';
 
 
-
 // Ensure cookies are included in all requests
 const fetchWithCredentials = (url: string, options: RequestInit = {}) => {
   return fetch(url, {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_URL } from '../config';
 
 interface User {
   id: string;
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(JSON.parse(storedUser));
         }
 
-        const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/verify`, {
+        const response = await fetch(`${API_URL}/auth/verify`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -64,6 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
             window.location.href = '/generatecaption';
           }
+
         } else {
           setUser(null);
           localStorage.removeItem('user');
@@ -87,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/Login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -102,7 +104,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-
+        // Add a small delay to ensure cookie is set
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Navigate to caption generator
+        window.location.href = '/generatecaption';
+        
         return { success: true, message: 'Login successful!' };
       } else {
         return { success: false, message: data.message || 'Login failed. Please check your credentials.' };
@@ -115,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
-      const response = await fetch(`https://caption-generator-q86a.onrender.com/api/auth/Register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -146,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch(`https://caption-generator-q86a.onrender.com/api/auth/logout`, {
+      await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -32,10 +32,9 @@ async function registercotroller(req, res) {
 
     res.cookie("usertoken", TOKEN, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,  // Always use secure in production
+      sameSite: 'none',  // Required for cross-site cookie
       maxAge: 3600000, // 1 hour
-      path: '/'
     });
 
     res.status(200).json({
@@ -84,10 +83,9 @@ async function logincontroller(req, res) {
 
     res.cookie("usertoken", TOKEN, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,  // Always use secure in production
+      sameSite: 'none',  // Required for cross-site cookie
       maxAge: 3600000, // 1 hour
-      path: '/'
     });
 
     res.status(200).json({

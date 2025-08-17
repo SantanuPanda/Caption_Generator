@@ -102,10 +102,8 @@ function Gencaption() {
       const response = await fetch(`https://caption-generator-q86a.onrender.com/api/posts/`, {
         method: 'POST',
         body: formData,
-        credentials: 'include', // Add credentials to include cookies
-        headers: {
-          'Accept': 'application/json',
-        }
+        credentials: 'include',
+        // Don't set Content-Type header, let the browser set it with the boundary for FormData
       });
 
       if (response.status === 401) {

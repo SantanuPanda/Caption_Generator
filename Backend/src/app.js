@@ -11,8 +11,10 @@ app.use(cors({
     origin: 'https://caption-generator-1-4w73.onrender.com',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
     exposedHeaders: ['Set-Cookie'],
+    preflightContinue: true,
+    optionsSuccessStatus: 200
 }));
 
 

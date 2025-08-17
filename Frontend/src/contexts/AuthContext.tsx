@@ -63,7 +63,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Redirect to caption generator if on landing page
           const currentPath = window.location.pathname;
           if (currentPath === '/' || currentPath === '/LoginPage' || currentPath === '/RegisterPage') {
-            window.location.href = '/generatecaption';
+            // Use window.location.replace instead of href for better handling
+            window.location.replace('/generatecaption');
           }
 
         } else {
@@ -107,8 +108,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Add a small delay to ensure cookie is set
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // Navigate to caption generator
-        window.location.href = '/generatecaption';
+        // Navigate to caption generator using replace
+        window.location.replace('/generatecaption');
         
         return { success: true, message: 'Login successful!' };
       } else {

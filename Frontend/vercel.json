@@ -1,0 +1,11 @@
+{
+  "routes": [
+    { "src": "/generatecaption", "dest": "/" },
+    { "src": "/LoginPage", "dest": "/" },
+    { "src": "/RegisterPage", "dest": "/" },
+    { "src": "/(.*)", "dest": "/" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

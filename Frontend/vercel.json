@@ -1,11 +1,17 @@
 {
-  "routes": [
-    { "src": "/generatecaption", "dest": "/" },
-    { "src": "/LoginPage", "dest": "/" },
-    { "src": "/RegisterPage", "dest": "/" },
-    { "src": "/(.*)", "dest": "/" }
-  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
   ]
 }
